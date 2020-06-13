@@ -44,7 +44,7 @@ contract Ownable {
 
 contract Converter is Ownable {
 
-	struct ChainAddress {
+    struct ChainAddress {
         bool enabled;
         string chainAddress;
     }
@@ -55,15 +55,15 @@ contract Converter is Ownable {
 
     event ConfOpenSet(bool confOpen);
 	
-	mapping(address => uint256) public amountMap;
-	mapping(address => ChainAddress) public chainAddressMap;
+    mapping(address => uint256) public amountMap;
+    mapping(address => ChainAddress) public chainAddressMap;
 
-	//config variable section
+    //config variable section
     bool public confOpen = true;
 
     address public tokenAddress;
 
-	//modifier section
+    //modifier section
     modifier onlyOpen(){
         require(confOpen, "not open");
         _;
