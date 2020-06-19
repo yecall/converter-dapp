@@ -101,15 +101,16 @@ export default {
       alert('未检测到Web3环境，请使用集成以太坊钱包的浏览器查看');
       return;
     }
-      await this.login()
-      const token = window.web3.eth.contract(tokenConfig)
-      this.tokenContext = token.at(tokenAdress)
-      const contract = window.web3.eth.contract(converter)
-      this.contractContext =  contract.at(converterAdress)
-      this.converterFn()
-      await this.getAllowancePrice()
-      this.checkHasAddress()
-      this.getblance()
+      await this.login(async () => {
+        const token = window.web3.eth.contract(tokenConfig)
+        this.tokenContext = token.at(tokenAdress)
+        const contract = window.web3.eth.contract(converter)
+        this.contractContext =  contract.at(converterAdress)
+        this.converterFn()
+        await this.getAllowancePrice()
+        this.checkHasAddress()
+        this.getblance()
+      })
   },
   methods: {
     async confirmAuth() {
@@ -134,8 +135,10 @@ export default {
       })
     }, 
     converterFn() {
+      console.log(this.account)
       this.contractContext.amountMap(this.account,(e, a) => {
         if(!e) {
+          console.log(a.toNumber())
           this.amountPrice =  NP.divide(a.toNumber(), 1e18)
         }
       })
@@ -216,7 +219,7 @@ export default {
         })
       })
     },
-    async login() {
+    async login(callback) {
       let web3Provider;
       if (window.ethereum) {
         web3Provider = window.ethereum;
@@ -234,6 +237,7 @@ export default {
       web3js.eth.getAccounts( (error, result) => {
         if (!error)
           this.account = result[0]
+          callback()
       });
     }
   }
