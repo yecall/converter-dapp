@@ -32,19 +32,30 @@
     </div>
     <div class="main">
       <div class="mainBox">
-        <div class="tips">如何获得主网地址？</div>
-        <div class="title">请输入你的YeeCo主网钱包地址</div>
+        <div v-if="!serveAddress">
+          <div class="tips">如何获得主网地址？</div>
+          <div class="title">请输入你的YeeCo主网钱包地址</div>
+        </div>
+        <div v-else-if="serveAddress && approveStatus === 0">
+          <div class="title">请输入转换数量后确认授权</div>
+        </div>
+        <div v-else-if="approveStatus === 1">
+          <div class="title">请等待授权确认后，登记转换</div>
+        </div>
+        <div v-else-if="approveStatus === 2 && transferStatus > 0">
+          <div class="title">请确认登记</div>
+        </div>
         <div class="walletAddress" v-if="serveAddress">
           {{YeeCoaddress}}
         </div>
-        <my-input v-else class="input"  placeholder="eg: yeexdsdfsf" v-model="YeeCoaddress" />
+        <my-input v-else class="input" :disabled="approveStatus !== 0" placeholder="eg: yeexdsdfsf" v-model="YeeCoaddress" />
         <div class="info">累计已登记：{{amountPrice}} YEE-YeeCo</div>
         <div class="heng"></div>
-        <my-input class="input" textRight="YEE-ERC20" :disabled="approveStatus !== 0" v-model="transferPrice" placeholder="请输入转换数量" type="number" :precision="1" />
-        <div class="info">剩余：{{balancePrice}} YEE-ERc20可转换</div>
+        <my-input class="input" textRight="YEE-ERC20" :disabled="approveStatus !== 0" v-model="transferPrice" placeholder="请输入转换数量" type="number" :precision="2" />
+        <div class="info">剩余：{{balancePrice}} YEE-ERC20可转换</div>
          <div class="button" :class="{ disabled: approveStatus > 0 }" @click="confirmAuth" v-if="approveStatus <= 1">
             {{
-              approveStatus === 1 ? '授权确认中' : '确认授权'
+              approveStatus === 1 ? '授权确认中...' : '确认授权'
             }}
           </div>
           <div class="button" :class="{ disabled: transferStatus > 0 }" @click="transfer" v-else>
@@ -73,9 +84,11 @@ import MyInput from "../components/MyInput";
 import bech32 from "bech32"
 import converter from '../config/converter.json'
 import tokenConfig from '../config/token.json'
+import { Dialog } from 'vant';
 import { converterAdress, tokenAdress, testAdress } from '../config/index'
 import NP from 'number-precision'
 const Web3 = window.Web3
+
 export default {
   name: 'App',
   data() {
@@ -120,7 +133,13 @@ export default {
         return alert('YeeCo主网地址错误')
       }
       if(res && this.transferPrice) {
-        await this.approve()
+        Dialog.confirm({
+          messageAlign: 'left',
+          title: '请核对你的YeeCo主网地址及转换数量',
+          message: `YeeCo主网地址${this.YeeCoaddress}\n转换数量${this.transferPrice} YEE-ERC20`,
+        }).then(() => {
+          this.approve()
+        });
       }
     },
     checkHasAddress() {
@@ -174,12 +193,22 @@ export default {
      transferFn() {
       return new Promise((resolve, reject) => {
         const transferPrice = this.transferPrice * 1e18
-        this.transferStatus = 1
         this.contractContext.checkIn(transferPrice, this.YeeCoaddress, (e,a) => {
           if(!e) {
+            this.transferStatus = 1
             this.contractContext.CheckIn((error, result) => {
               if(result.transactionHash === a) {
                 this.transferStatus = 2
+                this.converterFn()
+                this.balancePrice()
+                Dialog.alert({
+                  messageAlign: 'left',
+                  title: '登记已确认',
+                  message: `YeeCo主网地址${this.YeeCoaddress}\n转换金额${this.transferPrice} YEE-ERC20`,
+                }).then(() => {
+                  
+                  window.location.reload()
+                });
               } 
           })
             resolve(a)  
@@ -191,10 +220,10 @@ export default {
     },
     approve() {
       return new Promise((resolve) => {
-        this.approveStatus = 1
         const transferPrice = Number(this.transferPrice) * 1e18
         this.tokenContext.approve(converterAdress, transferPrice, (e,a) => {
           if(!e) {
+            this.approveStatus = 1
             resolve(a)
              this.tokenContext.Approval((error, result) => {
                 if(result.transactionHash === a) {
