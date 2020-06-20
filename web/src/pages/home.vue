@@ -224,6 +224,7 @@ export default {
         this.tokenContext.approve(converterAdress, transferPrice, (e,a) => {
           if(!e) {
             this.approveStatus = 1
+            this.serveAddress = this.YeeCoaddress
             resolve(a)
              this.tokenContext.Approval((error, result) => {
                 if(result.transactionHash === a) {
