@@ -42,7 +42,7 @@
         <div v-else-if="approveStatus === 1">
           <div class="title">请等待授权确认后，登记转换</div>
         </div>
-        <div v-else-if="approveStatus === 2 && transferStatus > 0">
+        <div v-else-if="approveStatus === 2 && transferStatus === 0">
           <div class="title">请确认登记</div>
         </div>
         <div class="walletAddress" v-if="serveAddress">
@@ -84,9 +84,10 @@ import MyInput from "../components/MyInput";
 import bech32 from "bech32"
 import converter from '../config/converter.json'
 import tokenConfig from '../config/token.json'
-import { Dialog } from 'vant';
-import { converterAdress, tokenAdress, testAdress } from '../config/index'
+import { Dialog, Toast } from 'vant';
+import { converterAdress, tokenAdress } from '../config/index'
 import NP from 'number-precision'
+
 const Web3 = window.Web3
 
 export default {
@@ -110,10 +111,10 @@ export default {
     MyInput
   },
   async created() {
-    if (typeof window.web3 === "undefined") {
-      alert('未检测到Web3环境，请使用集成以太坊钱包的浏览器查看');
-      return;
-    }
+      if (window.web3 === undefined) {
+        Toast.fail('未检测到钱包');
+        return;
+      }
       await this.login(async () => {
         const token = window.web3.eth.contract(tokenConfig)
         this.tokenContext = token.at(tokenAdress)
@@ -130,13 +131,13 @@ export default {
       if(this.approveStatus > 0) return
       const res = this.checkAdress()
       if(!res) {
-        return alert('YeeCo主网地址错误')
+        return Toast.fail('YeeCo主网地址错误');
       }
       if(res && this.transferPrice) {
         Dialog.confirm({
           messageAlign: 'left',
           title: '请核对你的YeeCo主网地址及转换数量',
-          message: `YeeCo主网地址${this.YeeCoaddress}\n转换数量${this.transferPrice} YEE-ERC20`,
+          message: `YeeCo主网地址：\n${this.YeeCoaddress}\n转换数量：\n${this.transferPrice} YEE-ERC20`,
         }).then(() => {
           this.approve()
         });
@@ -158,13 +159,13 @@ export default {
       this.contractContext.amountMap(this.account,(e, a) => {
         if(!e) {
           console.log(a.toNumber())
-          this.amountPrice =  NP.divide(a.toNumber(), 1e18)
+          this.amountPrice =  NP.divide(a.toNumber(), 1e18).toFixed(2)
         }
       })
     },
     getAllowancePrice() {
       return new Promise((resolve, reject) => {
-        this.tokenContext.allowance(testAdress,tokenAdress,(e, a) => {
+        this.tokenContext.allowance(this.account,tokenAdress,(e, a) => {
           if(!e) {
             this.allowancePrice =  NP.divide(a.toNumber(), 1e18)
             resolve(this.allowancePrice)
@@ -199,16 +200,15 @@ export default {
             this.contractContext.CheckIn((error, result) => {
               if(result.transactionHash === a) {
                 this.transferStatus = 2
-                this.converterFn()
-                this.balancePrice()
                 Dialog.alert({
                   messageAlign: 'left',
                   title: '登记已确认',
-                  message: `YeeCo主网地址${this.YeeCoaddress}\n转换金额${this.transferPrice} YEE-ERC20`,
+                  message: `YeeCo主网地址：\n${this.YeeCoaddress}\n转换金额：\n${this.transferPrice} YEE-ERC20`,
                 }).then(() => {
-                  
                   window.location.reload()
                 });
+                this.converterFn()
+                this.balancePrice()
               } 
           })
             resolve(a)  
@@ -237,10 +237,10 @@ export default {
     },
     getblance() {
       return new Promise((resolve, reject) => {
-        this.tokenContext.balanceOf(testAdress, (e,a) => {
+        this.tokenContext.balanceOf(this.account, (e,a) => {
           if(!e) {
             console.log(a.toNumber())
-            this.balancePrice =  NP.divide(a.toNumber(), 1e18)
+            this.balancePrice =  NP.divide(a.toNumber(), 1e18).toFixed(2)
             resolve(this.balancePrice)
           } else {
             reject(e)
@@ -250,6 +250,11 @@ export default {
     },
     async login(callback) {
       let web3Provider;
+      if (window.web3 === undefined) {
+        Toast.fail('未检测到钱包');
+        return;
+      }
+      console.log(window.web3)
       if (window.ethereum) {
         web3Provider = window.ethereum;
         try {
@@ -276,6 +281,7 @@ export default {
 <style lang="stylus" scoped>
 .button{
   padding 37px 0
+  cursor pointer
   background-color: #2e394b;
   box-shadow: 6px 10px 36px 0px rgba(46, 57, 75, 0.36);
   border-radius: 4px;
