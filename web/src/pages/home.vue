@@ -48,10 +48,14 @@
         <div class="walletAddress" v-if="serveAddress">
           {{YeeCoaddress}}
         </div>
-        <my-input v-else class="input" :disabled="approveStatus !== 0" placeholder="eg: yeexdsdfsf" v-model="YeeCoaddress" />
+        <my-input v-else class="input" :disabled="approveStatus !== 0" placeholder="eg. yee开头的62位字符串" v-model="YeeCoaddress" />
         <div class="info">累计已登记：{{amountPrice}} YEE-YeeCo</div>
         <div class="heng"></div>
-        <my-input class="input" textRight="YEE-ERC20" :disabled="approveStatus !== 0" v-model="transferPrice" placeholder="请输入转换数量" type="number" :precision="2" />
+        <my-input class="input" textRight="YEE-ERC20" v-if="approveStatus === 0" v-model="transferPrice" placeholder="请输入转换数量" type="number" :precision="2" />
+         <div class="walletAddress" v-else>
+          <div class="number">{{transferPrice}}</div>
+          <div class="textRight">ERC20</div>
+        </div>
         <div class="info">剩余：{{balancePrice}} YEE-ERC20可转换</div>
          <div class="button" :class="{ disabled: approveStatus > 0 }" @click="confirmAuth" v-if="approveStatus <= 1">
             {{
@@ -383,6 +387,10 @@ export default {
       border-radius: 4px;
       border-left #0c68ff 6px solid 
       color #0c68ff
+      display flex
+      .number{
+        margin-right 10px
+      }
     }
     .info{
       font-size: 24px;
