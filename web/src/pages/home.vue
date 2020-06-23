@@ -333,7 +333,7 @@ export default {
     border-radius: 4px;
     margin 0 auto
     position relative
-    top -78px
+    top -138px
   }
   .explain{
     margin-left 29px
