@@ -251,3 +251,21 @@
 ]
 ```
 
+## Test account
+```
+champion gadget normal mixed critic inform shine fabric train flush trim credit
+```
+
+# Mainnet deploy result
+
+```
+> tx: https://etherscan.io/tx/0xd44972b62f743ede8956b9bd04bd509e5e66daff1201bd929c5df360689bca30
+
+> contract address:    0x24fbcc3a94b8836dfcc50efa8d7f4db236823770
+
+```
+
+
+
+
+

@@ -300,3 +300,8 @@
 ]
 ```
 
+
+## Test account
+```
+champion gadget normal mixed critic inform shine fabric train flush trim credit
+```
