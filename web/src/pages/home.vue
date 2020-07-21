@@ -89,7 +89,7 @@ import bech32 from "bech32"
 import converter from '../config/converter.json'
 import tokenConfig from '../config/token.json'
 import { Dialog, Toast } from 'vant';
-import { converterAdress, tokenAdress } from '../config/index'
+import { converterAdress, tokenAdress, hrp } from '../config/index'
 import NP from 'number-precision'
 
 const Web3 = window.Web3
@@ -188,10 +188,11 @@ export default {
        let res
        try {
          res = bech32.decode(address)
+         res.bytes = bech32.fromWords(res.words)
        } catch (error){
          return false
        }
-       if(res.prefix === 'yee' && res.words.length === 32) {
+       if(res.prefix === hrp && res.bytes.length === 32) {
          return true
        }
      },
