@@ -8,7 +8,7 @@
     <div class="main"> 
       <div class="mainBox">
         <div class="title" >请登录以太坊钱包</div>
-        <a class="tips" target="_blank" href="https://github.com/yeeco/wiki/wiki/YeeCo%E8%BD%AC%E6%8D%A2%E7%BD%91%E5%85%B3%E4%BD%BF%E7%94%A8%E8%AF%B4%E6%98%8E">未检测到钱包？</a>
+        <a class="tips" href="https://github.com/yeeco/wiki/wiki/YeeCo%E8%BD%AC%E6%8D%A2%E7%BD%91%E5%85%B3%E4%BD%BF%E7%94%A8%E8%AF%B4%E6%98%8E">未检测到钱包？</a>
         <div class="wallet"></div>
         <div class="button" @click="login">登录钱包</div>
       </div>
@@ -37,7 +37,7 @@
     <div class="main">
       <div class="mainBox">
         <div v-if="!serveAddress">
-          <a class="tips" href="https://github.com/yeeco/wiki/wiki/YeeCo%E8%BD%AC%E6%8D%A2%E7%BD%91%E5%85%B3%E4%BD%BF%E7%94%A8%E8%AF%B4%E6%98%8E" target="_blank">如何获得主网地址？</a>
+          <a class="tips" href="https://github.com/yeeco/wiki/wiki/YeeCo%E8%BD%AC%E6%8D%A2%E7%BD%91%E5%85%B3%E4%BD%BF%E7%94%A8%E8%AF%B4%E6%98%8E">如何获得主网地址？</a>
           <div class="title">请输入你的YeeCo主网钱包地址</div>
         </div>
         <div v-else-if="serveAddress && approveStatus === 0">
@@ -400,8 +400,8 @@ export default {
       color: #0c68ff;
     }
     .walletAddress{
-      height: 92px;
-      line-height 92px
+      padding-top: 24px;
+      padding-bottom: 24px;
       box-sizing border-box
       padding-left 33px
       background-color: rgba(12, 104, 255, 0.1);
@@ -409,6 +409,8 @@ export default {
       border-left #0c68ff 6px solid 
       color #0c68ff
       display flex
+      word-wrap:break-word;
+      word-break:break-all;
       .number{
         margin-right 10px
       }
