@@ -131,9 +131,9 @@ export default {
         const contract = window.web3.eth.contract(converter)
         this.contractContext =  contract.at(converterAdress)
         this.converterFn()
-        await this.getAllowancePrice()
         this.checkHasAddress()
         this.getblance()
+        await this.getAllowancePrice()
       })
   },
   methods: {
@@ -175,7 +175,7 @@ export default {
     },
     getAllowancePrice() {
       return new Promise((resolve, reject) => {
-        this.tokenContext.allowance(this.account,tokenAdress,(e, a) => {
+        this.tokenContext.allowance(this.account,converterAdress,(e, a) => {
           if(!e) {
             this.allowancePrice =  NP.divide(a.toNumber(), 1e18)
             resolve(this.allowancePrice)
@@ -230,19 +230,33 @@ export default {
       })
     },
     approve() {
-      return new Promise((resolve) => {
+      return new Promise((resolve, reject) => {
         const transferPrice = Number(this.transferPrice) * 1e18
-        this.tokenContext.approve(converterAdress, transferPrice, (e,a) => {
-          if(!e) {
-            this.approveStatus = 1
-            this.serveAddress = this.YeeCoaddress
-            resolve(a)
-             this.tokenContext.Approval((error, result) => {
-                if(result.transactionHash === a) {
-                  this.approveStatus = 2
-                } 
-            })
-          }
+
+        this.tokenContext.allowance(this.account,converterAdress,(e, a) => {
+            if(!e) {
+                this.allowancePrice =  a.toNumber()
+
+                if (this.allowancePrice >= transferPrice) {
+                    // skip approve
+                    this.approveStatus = 2
+                } else{
+                    this.tokenContext.approve(converterAdress, transferPrice, (e,a) => {
+                        if(!e) {
+                            this.approveStatus = 1
+                            this.serveAddress = this.YeeCoaddress
+                            resolve(a)
+                            this.tokenContext.Approval((error, result) => {
+                                if(result.transactionHash === a) {
+                                    this.approveStatus = 2
+                                }
+                            })
+                        }
+                    })
+                }
+            } else {
+                reject(e)
+            }
         })
         return
       })
