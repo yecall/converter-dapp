@@ -3,22 +3,26 @@
     <div class="home-contain" v-if="!account">
     <div class="header">
       <div class="title">YeeCo转换网关</div>
-      <div class="tips">将YEE-ERC20转换为YEE-YeeCo</div>
+      <div class="tips">将YEE-Erc20转换为YEE-YeeCo</div>
     </div>
     <div class="main"> 
       <div class="mainBox">
         <div class="title" >请登录以太坊钱包</div>
-        <div class="tips">未检测到钱包？</div>
+        <a class="tips" target="_blank" href="https://github.com/yeeco/wiki/wiki/YeeCo%E8%BD%AC%E6%8D%A2%E7%BD%91%E5%85%B3%E4%BD%BF%E7%94%A8%E8%AF%B4%E6%98%8E">未检测到钱包？</a>
         <div class="wallet"></div>
         <div class="button" @click="login">登录钱包</div>
       </div>
     <div class="explain">
       <div class="title">转换说明</div>
       <div class="content">
-        1. 仅支持YEE-ERC20转换为YEE-YEECO，不支持逆向转换 <br />
-        2. 转换后的YEE-YEECO将在主网上线后3个工作日内收到<br />
-        3. 1个ERC20地址仅能绑定1个YEECO主网地址，且无法修改<br />
-        4. YEE转换网关采用智能合约实现，转换时需要消耗一定ETH作为GAS费<br />
+        1. 转换后的YEE-YeeCo暂不支持在交易所充提，具体支持日期后续公布<br />
+        2. 仅支持YEE-Erc20转换为YEE-YeeCo，不支持逆向转换<br />
+        3. 转换网关采用每7天一个周期进行登记并统一进行转换，每周五0:00为登记截止日期，7天内在网关登记的记录将在下周二前完成转换。届时请前往绑定的YeeCo主网钱包地址查收转换的YEE-YeeCo<br />
+        4. 1个Erc20地址仅能绑定1个YeeCo主网地址，且无法修改<br />
+        5. YEE转换网关采用智能合约实现，转换时需要消耗少量ETH作为GAS费，为保证转换成功，请确保Erc20地址中持有一定ETH<br />
+        6. 转换网关将于2020年08月31日截止登记，截止后将无法通过网关进行登记转换<br />
+        <br />
+        <br />
       </div>
     </div>
     </div>
@@ -27,13 +31,13 @@
   <div class="transfer-contain" v-else>
     <div class="header">
       <div class="title">YeeCo转换网关</div>
-      <div class="tips">将YEE-ERC20转换为YEE-YeeCo</div>
+      <div class="tips">将YEE-ER20转换为YEE-YeeCo</div>
       <div class="address">{{account}}</div>
     </div>
     <div class="main">
       <div class="mainBox">
         <div v-if="!serveAddress">
-          <div class="tips">如何获得主网地址？</div>
+          <a class="tips" href="https://github.com/yeeco/wiki/wiki/YeeCo%E8%BD%AC%E6%8D%A2%E7%BD%91%E5%85%B3%E4%BD%BF%E7%94%A8%E8%AF%B4%E6%98%8E" target="_blank">如何获得主网地址？</a>
           <div class="title">请输入你的YeeCo主网钱包地址</div>
         </div>
         <div v-else-if="serveAddress && approveStatus === 0">
@@ -51,12 +55,12 @@
         <my-input v-else class="input" :disabled="approveStatus !== 0" placeholder="eg. yee开头的62位字符串" v-model="YeeCoaddress" />
         <div class="info">累计已登记：{{amountPrice}} YEE-YeeCo</div>
         <div class="heng"></div>
-        <my-input class="input" textRight="YEE-ERC20" v-if="approveStatus === 0" v-model="transferPrice" placeholder="请输入转换数量" type="number" :precision="2" />
+        <my-input class="input" textRight="YEE-Erc20" v-if="approveStatus === 0" v-model="transferPrice" placeholder="请输入转换数量" type="number" :precision="2" />
          <div class="walletAddress" v-else>
           <div class="number">{{transferPrice}}</div>
-          <div class="textRight">ERC20</div>
+          <div class="textRight">YEE-Erc20</div>
         </div>
-        <div class="info">剩余：{{balancePrice}} YEE-ERC20可转换</div>
+        <div class="info">剩余：{{balancePrice}} YEE-Erc20可转换</div>
          <div class="button" :class="{ disabled: approveStatus > 0 }" @click="confirmAuth" v-if="approveStatus <= 1">
             {{
               approveStatus === 1 ? '授权确认中...' : '确认授权'
@@ -71,10 +75,12 @@
     <div class="explain">
       <div class="title">转换说明</div>
       <div class="content">
-        1. 仅支持YEE-ERC20转换为YEE-YEECO，不支持逆向转换 <br />
-        2. 转换后的YEE-YEECO将在主网上线后3个工作日内收到<br />
-        3. 1个ERC20地址仅能绑定1个YEECO主网地址，且无法修改<br />
-        4. YEE转换网关采用智能合约实现，转换时需要消耗一定ETH作为GAS费<br />
+        1. 转换后的YEE-YeeCo暂不支持在交易所充提，具体支持日期后续公布<br />
+        2. 仅支持YEE-Erc20转换为YEE-YeeCo，不支持逆向转换<br />
+        3. 转换网关采用每7天一个周期进行登记并统一进行转换，每周五0:00为登记截止日期，7天内在网关登记的记录将在下周二前完成转换。届时请前往绑定的YeeCo主网钱包地址查收转换的YEE-YeeCo<br />
+        4. 1个Erc20地址仅能绑定1个YeeCo主网地址，且无法修改<br />
+        5. YEE转换网关采用智能合约实现，转换时需要消耗少量ETH作为GAS费，为保证转换成功，请确保Erc20地址中持有一定ETH<br />
+        6. 转换网关将于2020年08月31日截止登记，截止后将无法通过网关进行登记转换<br />
         <br />
         <br />
       </div>
@@ -141,7 +147,7 @@ export default {
         Dialog.confirm({
           messageAlign: 'left',
           title: '请核对你的YeeCo主网地址及转换数量',
-          message: `YeeCo主网地址：\n${this.YeeCoaddress}\n转换数量：\n${this.transferPrice} YEE-ERC20`,
+          message: `YeeCo主网地址：\n${this.YeeCoaddress}\n转换数量：\n${this.transferPrice} YEE-Erc20`,
         }).then(() => {
           this.approve()
         });
@@ -208,7 +214,7 @@ export default {
                 Dialog.alert({
                   messageAlign: 'left',
                   title: '登记已确认',
-                  message: `YeeCo主网地址：\n${this.YeeCoaddress}\n转换金额：\n${this.transferPrice} YEE-ERC20`,
+                  message: `YeeCo主网地址：\n${this.YeeCoaddress}\n转换金额：\n${this.transferPrice} YEE-Erc20`,
                 }).then(() => {
                   window.location.reload()
                 });
