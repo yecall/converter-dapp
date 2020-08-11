@@ -31,7 +31,7 @@
   <div class="transfer-contain" v-else>
     <div class="header">
       <div class="title">YeeCo转换网关</div>
-      <div class="tips">将YEE-ER20转换为YEE-YeeCo</div>
+      <div class="tips">将YEE-Erc20转换为YEE-YeeCo</div>
       <div class="address">{{account}}</div>
     </div>
     <div class="main">
